@@ -92,9 +92,9 @@ function drawLandBlock(p, s, edges) {
   p.endShape(p.CLOSE);
 }
 
-function drawPyramid(p, s) {
+function drawPyramid(p, s, height) {
   const h = s / 2;
-  const apex = -s; // top of pyramid (one block_size above the land block top)
+  const apex = -(height ?? s);
 
   p.fill(160, 160, 160);
 
@@ -192,6 +192,26 @@ const sketch = (p) => {
         }
 
         p.pop();
+      }
+    }
+
+    // Extra pyramids at corners where four mountains meet
+    for (let row = 0; row < rows - 1; row++) {
+      for (let col = 0; col < cols - 1; col++) {
+        if (
+          grid[row][col] === "m" &&
+          grid[row][col + 1] === "m" &&
+          grid[row + 1][col] === "m" &&
+          grid[row + 1][col + 1] === "m"
+        ) {
+          const cx = (col + 0.5) * BLOCK_SIZE - offsetX;
+          const cz = (row + 0.5) * BLOCK_SIZE - offsetZ;
+          p.push();
+          p.translate(cx, -BLOCK_SIZE / 2, cz);
+          p.stroke(120);
+          drawPyramid(p, BLOCK_SIZE, BLOCK_SIZE * 1.5);
+          p.pop();
+        }
       }
     }
   };
