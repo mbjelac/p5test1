@@ -92,6 +92,41 @@ function drawLandBlock(p, s, edges) {
   p.endShape(p.CLOSE);
 }
 
+function drawPyramid(p, s) {
+  const h = s / 2;
+  const apex = -s; // top of pyramid (one block_size above the land block top)
+
+  p.fill(160, 160, 160);
+
+  // Front face
+  p.beginShape();
+  p.vertex(-h, 0, h);
+  p.vertex(h, 0, h);
+  p.vertex(0, apex, 0);
+  p.endShape(p.CLOSE);
+
+  // Back face
+  p.beginShape();
+  p.vertex(-h, 0, -h);
+  p.vertex(h, 0, -h);
+  p.vertex(0, apex, 0);
+  p.endShape(p.CLOSE);
+
+  // Left face
+  p.beginShape();
+  p.vertex(-h, 0, -h);
+  p.vertex(-h, 0, h);
+  p.vertex(0, apex, 0);
+  p.endShape(p.CLOSE);
+
+  // Right face
+  p.beginShape();
+  p.vertex(h, 0, -h);
+  p.vertex(h, 0, h);
+  p.vertex(0, apex, 0);
+  p.endShape(p.CLOSE);
+}
+
 function isOnMap(grid, row, col) {
   return row >= 0 && row < grid.length && col >= 0 && col < grid[row].length;
 }
@@ -136,6 +171,19 @@ const sketch = (p) => {
             front: !isOnMap(grid, row + 1, col),
             back: !isOnMap(grid, row - 1, col),
           });
+        } else if (cell === "m") {
+          p.translate(x, 0, z);
+          p.stroke(150);
+          drawLandBlock(p, BLOCK_SIZE, {
+            left: !isOnMap(grid, row, col - 1),
+            right: !isOnMap(grid, row, col + 1),
+            front: !isOnMap(grid, row + 1, col),
+            back: !isOnMap(grid, row - 1, col),
+          });
+          // pyramid sits on top of the land block
+          p.translate(0, -BLOCK_SIZE / 2, 0);
+          p.stroke(120);
+          drawPyramid(p, BLOCK_SIZE);
         } else if (cell === "r") {
           p.translate(x, INSET, z);
           p.fill(60, 120, 255);
